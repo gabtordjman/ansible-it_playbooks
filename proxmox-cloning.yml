@@ -1,0 +1,55 @@
+- name: Cloner une VM depuis un template Debian
+  hosts: localhost
+  gather_facts: no
+
+  vars_prompt:
+    - name: api_host
+      prompt: "Adresse IP ou hostname du serveur Proxmox"
+      private: no
+    - name: api_user
+      prompt: "Utilisateur (ex: root@pam)"
+      private: no
+    - name: api_password
+      prompt: "Mot de passe"
+      private: yes
+    - name: node
+      prompt: "Nom du node Proxmox (ex: pve ou pve2)"
+      private: no
+    - name: vmid_clone
+      prompt: "ID de la VM template"
+      private: no
+    - name: vmid_template
+      prompt: "ID de la nouvelle VM clonée"
+      private: no
+    - name: vm_name
+      prompt: "Nom de la nouvelle VM"
+      private: no
+    - name: memory
+      prompt: "Mémoire (MB)"
+      private: no
+      default: 2048
+    - name: cores
+      prompt: "Nombre de cores CPU"
+      private: no
+      default: 2
+    - name: storage
+      prompt: "Nom du storage cible (ex: local-lvm, stockage_vm)"
+      private: no
+
+  tasks:
+    - name: Créer une VM clonée
+      community.proxmox.proxmox_kvm:
+        api_host: "{{ api_host }}"
+        api_user: "{{ api_user }}"
+        api_password: "{{ api_password }}"
+        node: "{{ node }}"
+        vmid: "{{ vmid_clone }}"
+        clone: "{{ vmid_template }}"
+        name: "{{ vm_name }}"
+        storage: "{{ storage }}"
+        net:
+          net0: virtio,bridge=vmbr0
+        memory: "{{ memory }}"
+        cores: "{{ cores }}"
+        state: present
+        timeout: 600
