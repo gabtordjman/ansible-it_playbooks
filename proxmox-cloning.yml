@@ -1,4 +1,4 @@
-- name: Cloner une VM depuis un template Debian
+- name: Cloner une VM depuis un template
   hosts: localhost
   gather_facts: no
 
@@ -15,7 +15,7 @@
     - name: node
       prompt: "Nom du node Proxmox (ex: pve ou pve2)"
       private: no
-    - name: vmid_clone
+    - name: vmid_clone    # Valeurs inversées (clone & template) sont normales
       prompt: "ID de la VM template"
       private: no
     - name: vmid_template
@@ -37,7 +37,7 @@
       private: no
 
   tasks:
-    - name: Créer une VM clonée
+    - name: Créer la VM a partir du template
       community.proxmox.proxmox_kvm:
         api_host: "{{ api_host }}"
         api_user: "{{ api_user }}"
